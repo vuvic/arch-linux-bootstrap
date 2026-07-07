@@ -1,0 +1,26 @@
+- name: Configure grub bootloader
+  hosts: localhost
+  become: true
+
+  vars:
+    grub_packages:
+      - grub
+      - efibootmgr
+      - os-prober
+    config_location: /etc/default/grub
+
+  tasks:
+    - name: Install required packages
+      ansible.builtin.package:
+        name: "{{ grub_packages }}"
+        state: present
+    - name: Enable os-prober
+      ansible.builtin.lineinfile:
+        path: "{{ config_location }}"
+        regexp: '^GRUB_DISABLE_OS_PROBER='
+        line: 'GRUB_DISABLE_OS_PROBER=false'
+      notify: Regenerate grub
+
+  handlers:
+    - name: Generate configuration
+      command: grub-mkconfig -o /boot/grub/grub.cfg

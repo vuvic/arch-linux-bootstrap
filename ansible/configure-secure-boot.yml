@@ -1,0 +1,57 @@
+- name: Configure secure boot
+  hosts: localhost
+  become: true
+
+  tasks:
+    - name: Install sbctl
+      ansible.builtin.package:
+        name: sbctl
+        state: present
+
+    - name: Check sbctl status
+      ansible.builtin.command: sbctl status --json
+      register: sbctl_status
+      changed_when: false
+
+    - name: Parse sbctl status JSON
+      ansible.builtin.set_fact:
+        sbctl_state: "{{ sbctl_status.stdout | from_json }}"
+
+    - name: Fail if firmware is not in Setup Mode
+      ansible.builtin.fail:
+        msg: >
+          Secure Boot firmware is not in Setup Mode.
+          Clear the Platform Key (PK) in UEFI firmware before enrolling sbctl keys.
+      when: not sbctl_state.setup_mode
+
+    - name: Create secure boot keys
+      ansible.builtin.command: sbctl create-keys
+      args:
+        creates: /var/lib/sbctl/keys
+    - name: Temporarily remove immutable flags
+      ansible.builtin.command:
+        cmd: sudo chattr -i /sys/firmware/efi/efivars/KEK-* && \ 
+             sudo chattr -i /sys/firmware/efi/efivars/db-*
+      changed_when: true
+
+    - name: Enable Secure Boot keys
+      ansible.builtin.command: sbctl enroll-keys -m
+      when: sbctl_state.setup_mode
+      register: enroll_result
+      changed_when: true
+
+    - name: Verify EFI binaries with JSON output
+      ansible.builtin.command:
+        cmd: sbctl verify --json
+      register: sbctl_verify_json
+      changed_when: false
+
+    - name: Parse sbctl verification data
+      ansible.builtin.set_fact:
+        sbctl_files: "{{ sbctl_verify_json.stdout | from_json }}"
+
+    - name: Sign unsigned files
+      ansible.builtin.command:
+        cmd: "sbctl sign -s {{ item.path }}"
+      loop: "{{ sbctl_files }}"
+      when: not item.signed
