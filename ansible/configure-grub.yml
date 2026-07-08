@@ -19,7 +19,7 @@
         path: "{{ config_location }}"
         regexp: '^GRUB_DISABLE_OS_PROBER='
         line: 'GRUB_DISABLE_OS_PROBER=false'
-      notify: Regenerate grub
+      notify: Generate configuration
 
   handlers:
     - name: Generate configuration
