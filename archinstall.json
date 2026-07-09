@@ -1,32 +1,7 @@
 {
-    "app_config": {
-        "audio_config": {
-            "audio": "pipewire"
-        },
-        "bluetooth_config": {
-            "enabled": true
-        },
-        "firewall_config": {
-            "firewall": "ufw"
-        },
-        "fonts_config": {
-            "fonts": [
-                "noto-fonts",
-                "noto-fonts-emoji",
-                "noto-fonts-cjk",
-                "ttf-liberation",
-                "ttf-dejavu"
-            ]
-        },
-        "power_management_config": {
-            "power_management": "power-profiles-daemon"
-        },
-        "print_service_config": {
-            "enabled": true
-        }
-    },
+    "app_config": null,
     "archinstall-language": "English",
-    "auth_config": null,
+    "auth_config": {},
     "bootloader_config": {
         "bootloader": "Systemd-boot",
         "removable": false,
@@ -54,7 +29,7 @@
                         "fs_type": "fat32",
                         "mount_options": [],
                         "mountpoint": "/boot",
-                        "obj_id": "be708865-7153-4c65-87c7-be2d8e81264b",
+                        "obj_id": "1b916c88-6582-4ef4-abb6-dd65c17652c8",
                         "size": {
                             "sector_size": {
                                 "unit": "B",
@@ -100,7 +75,7 @@
                             "compress=zstd"
                         ],
                         "mountpoint": null,
-                        "obj_id": "98ef8a21-448c-48fb-b711-87ba1f3c1ec7",
+                        "obj_id": "d9ede9ed-2e36-400e-8ace-78b16c44109f",
                         "size": {
                             "sector_size": {
                                 "unit": "B",
