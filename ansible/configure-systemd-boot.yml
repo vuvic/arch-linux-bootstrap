@@ -1,0 +1,13 @@
+- name: Configure systemd-boot
+  hosts: localhost
+  become: true
+
+  vars:
+    config_location: /boot/loader/loader.conf
+
+  tasks:
+    - name: Set timeout to 300 seconds
+      ansible.builtin.lineinfile:
+        path: "{{ config_location }}"
+        regexp: '^timeout\s+\d+$'
+        line: 'timeout 300'
